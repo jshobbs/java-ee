@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="dangoMovieApp">
+	<head>
+		<meta charset="utf-8">
+		<title>Moviedango - Movies Playing</title>
+		<link rel="stylesheet" href="css/bootstrap.css" type="text/css">
+		<script src="js/angular.min.js"></script>
+		<script src="js/angular-route.min.js"></script>
+		<script src="js/moviecontroller.js"></script>
+	</head>
+	<body>
+    	<div class="container">
+        	<h1>Moviedango - Go See A Movie!</h1>        
+			<div>
+	        	<div class="row"> 
+	        		<div class="span10">
+	        			<h2>Movies Now Playing</h2>
+	        		</div>            
+	            	<div class="span5">
+	                	<!-- Movie search -->
+	                	<div ng-controller="movieSearchController">
+	                    	<h3>Find Movie</h3>
+	                    	<p ng-class="{'alert alert-error':errorStatus,'alert alert-success':!errorStatus}">{{messageText}}</p>
+	                    	Movie Name <input type="text" ng-model="searchMovieName" /><br/>
+	                    	Studio <input type="text" ng-model="searchStudio" /><br/>
+	                    	<a class="btn btn-success" ng-click="search()"><i class="icon-search"></i> Search</a>
+	                    	<div>
+	                        	<table class="table table-striped table-bordered table-hover">
+	                            	<thead>
+	                                	<tr>
+	                                    	<th>Id</th>
+	                                    	<th>Movie Name</th>
+	                                    	<th>Studio</th>
+	                                	</tr>
+	                            	</thead>
+	                            	<tbody>
+	                                	<tr ng-repeat="movie in movies">
+	                                    	<td>{{movie.movie.id}}</td>
+	                                    	<td>{{movie.movie.movieName}}</td>
+	                                    	<td>{{movie.movie.studio}}</td>
+	                                	</tr>
+	                            	</tbody>
+	                        	</table>                  
+	                    	</div>                         
+	                    	<!--  <div class="muted"> -->
+	                        <!--  	<h6>DEBUG</h6> -->
+	                        <!--  	<p>HTTP Response status {{httpStatus}}</p> -->
+	                        <!--  	<p>HTTP Response body {{httpData | json}}</p>  -->                     
+	                    	<!--  </div>  -->
+	                	</div>   
+	            	</div>
+	            	<div class="span5">
+	                    <!-- View All Movies -->
+	                	<div ng-controller="moviesReturnController">
+	                    	<h3>See All Movies</h3>
+	                    	<p ng-class="{'alert alert-error':errorStatus,'alert alert-success':!errorStatus}">{{messageText}}</p>
+	                    	<a class="btn btn-success" ng-click="getAll()"><i class="icon-search"></i>View All</a>
+	                    	<div>
+	                        	<table class="table table-striped table-bordered table-hover">
+	                            	<thead>
+	                                	<tr>
+	                                    	<th>Id</th>
+	                                    	<th>Movie Name</th>
+	                                    	<th>Studio</th>
+	                                	</tr>
+	                            	</thead>
+	                            	<tbody>
+	                                	<tr ng-repeat="movie in allMovies">
+	                                    	<td>{{movie.movie.id}}</td>
+	                                    	<td>{{movie.movie.movieName}}</td>
+	                                    	<td>{{movie.movie.studio}}</td>
+	                                	</tr>
+	                            	</tbody>
+	                        	</table>                  
+	                    	</div>                         
+	                	</div>	
+	            	</div>
+	        	</div>  
+	        </div>	
+	       	<div>
+	        	<div class="row">
+	        		<div class="span10">
+	        			<h2>Advanced Search</h2>
+	        		</div>           
+	            	<div class="span5">
+	            		<div ng-controller="theaterSearchController">
+	                    	<h3>Find Theater For Movie</h3>
+	                    	<p ng-class="{'alert alert-error':errorStatus,'alert alert-success':!errorStatus}">{{messageText}}</p>
+	                    	
+	                    	Select Movie <select ng-model="movie.id">
+	  						<option value="1">Frozen</option>
+	  						<option value="2">Fast and Furious</option>
+							</select>
+	                    	
+	                    	<a class="btn btn-success" ng-click="theatersByMovie()"><i class="icon-search"></i> Search</a>
+	
+	                    	<div>
+	                        	<table class="table table-striped table-bordered table-hover">
+	                            	<thead>
+	                                	<tr>
+	                                    	<th>Theater Name</th>
+	                                    	<th>Theater Address</th>
+	                                    	<th>Showtime</th>
+	                                	</tr>
+	                            	</thead>
+	                            	<tbody>
+	                                	<tr ng-repeat="theater in foundTheaters | orderBy:['showtime.theater.theaterName','showtime.showTime']">
+	                                    	<td>{{theater.showtime.theater.theaterName}}</td>
+	                                    	<td>{{theater.showtime.theater.theaterAddress}}</td>
+	                                    	<td>{{theater.showtime.showTime  | date:'shortTime'}}</td>                                    	
+	                                	</tr>
+	                            	</tbody>
+	                        	</table>                  
+	                    	</div>                       
+	                	</div>                  
+	            	</div>	   
+	            	<div class="span5">
+	            		<!-- Movie search -->
+	                	<div ng-controller="movieSearchController">
+	                    	<h3>Find Movie By Theater</h3>
+	                    	<p ng-class="{'alert alert-error':errorStatus,'alert alert-success':!errorStatus}">{{messageText}}</p>
+	                    	
+	                		Select Theater <select ng-model="theater.id">
+	  						<option value="1" selected>AMC of Silicon Valley</option>
+	  						<option value="2">Metreon San Francisco</option>
+							</select>
+	                    	
+	                    	<a class="btn btn-success" ng-click="moviesByTheater()"><i class="icon-search"></i> Search</a>
+	                    	<div>
+	                        	<table class="table table-striped table-bordered table-hover">
+	                            	<thead>
+	                                	<tr>
+	                                    	<th>Movie Name</th>
+	                                    	<th>Movie Category</th>
+	                                    	<th>Showtime</th>
+	                                	</tr>
+	                            	</thead>
+	                            	<tbody>
+	                                	<tr ng-repeat="movie in movies | orderBy:['showtime.movie.movieName','showtime.showTime']">
+	                                    	<td>{{movie.showtime.movie.movieName}}</td>
+	                                    	<td>{{movie.showtime.movie.movieCategory}}</td>
+	                                    	<td>{{movie.showtime.showTime  | date:'shortTime'}}</td>
+	                                	</tr>
+	                            	</tbody>
+	                        	</table>                  
+	                    	</div>                         
+	                	</div>   
+	            	</div>
+	            </div>
+	        </div>
+	       	<div>
+	        	<div class="row"> 
+	        		<div class="span10">
+	        			<h2>Movie Theaters</h2>
+	        		</div>           
+	            	<div class="span5">
+	            	
+	            		<div ng-controller="theatersReturnController">
+	                    	<h3>See All Theaters</h3>
+	                    	<p ng-class="{'alert alert-error':errorStatus,'alert alert-success':!errorStatus}">{{messageText}}</p>
+	                    	<a class="btn btn-success" ng-click="getAllTheaters()"><i class="icon-search"></i>View All</a>
+	                    	<div>
+	                        	<table class="table table-striped table-bordered table-hover">
+	                            	<thead>
+	                                	<tr>
+	                                    	<th>Id</th>
+	                                    	<th>Theater Name</th>
+	                                    	<th>Number of Screens</th>
+	                                	</tr>
+	                            	</thead>
+	                            	<tbody>
+	                                	<tr ng-repeat="theater in allTheaters">
+	                                    	<td>{{theater.theater.id}}</td>
+	                                    	<td>{{theater.theater.theaterName}}</td>
+	                                    	<td>{{theater.theater.numberOfScreens}}</td>
+	                                	</tr>
+	                            	</tbody>
+	                        	</table>                  
+	                    	</div>                         
+	                	</div>	
+	            	</div>
+	            	<div class="span5">
+	            		<div ng-controller="theaterSearchController">
+	                    	<h3>Find A Theater</h3>
+	                    	<p ng-class="{'alert alert-error':errorStatus,'alert alert-success':!errorStatus}">{{messageText}}</p>
+	                    	Theater Name <input type="text" ng-model="searchTheaterName" /><br/>
+	                    	<a class="btn btn-success" ng-click="searchTheater()"><i class="icon-search"></i> Search</a>
+	                    	<div>
+	                       		<table class="table table-striped table-bordered table-hover">
+	                            	<thead>
+	                                	<tr>
+	                                    	<th>Id</th>
+	                                    	<th>Theater Name</th>
+	                                    	<th>Number of Screens</th>
+	                                	</tr>
+	                            	</thead>
+	                            	<tbody>
+	                                	<tr ng-repeat="theater in foundTheaters">
+	                                    	<td>{{theater.theater.id}}</td>
+	                                    	<td>{{theater.theater.theaterName}}</td>
+	                                    	<td>{{theater.theater.numberOfScreens}}</td>
+	                                	</tr>
+	                            	</tbody>
+	                       		</table>                  
+	                    	</div>                         
+	                	</div>         
+	            	</div>
+	            </div>
+	        </div>
+	        <div>
+	        	<div class="row">            
+	            	<div class="span5">
+	            	
+	            		<h2>Movie Reviews</h2>
+	            		<div ng-controller="reviewsReturnController">
+	                    	<h3>See All Movie Reviews</h3>
+	                    	<p ng-class="{'alert alert-error':errorStatus,'alert alert-success':!errorStatus}">{{messageText}}</p>
+	                    	<a class="btn btn-success" ng-click="getAllReviews()"><i class="icon-search"></i>View All</a>
+	                    	<div>
+	                        	<table class="table table-striped table-bordered table-hover">
+	                            	<thead>
+	                                	<tr>
+	                                    	<th>Id</th>
+	                                    	<th>Movie</th>
+	                                    	<th>Movie Review Source</th>
+	                                    	<th>Movie Review</th>
+	                                	</tr>
+	                            	</thead>
+	                            	<tbody>
+	                                	<tr ng-repeat="review in allReviews">
+	                                    	<td>{{review.movie_review.id}}</td>
+	                                    	<td>{{review.movie_review.movie.movieName}}</td>
+	                                    	<td>{{review.movie_review.movieReviewSource}}</td>
+	                                    	<td>{{review.movie_review.movieReview}}</td>
+	                                	</tr>
+	                            	</tbody>
+	                        	</table>                  
+	                    	</div>                         
+	                	</div>
+	            	</div>
+	            	<div class="span5">
+	            		<h2>Enter Movie</h2>
+	            		<!-- New Movie -->
+	                	<div ng-controller="addMovieController">
+	                    	<h3><i class="icon-film"></i> New Movie</h3>
+	                    	<p ng-class="{'alert alert-error':errorStatus,'alert alert-success':!errorStatus}">{{messageText}}</p>
+	                    	Movie Name <input type="text" ng-model="createMovieName" /><br/>
+	                    	Play Length <input type="text" ng-model="createPlayLength" /><br/>
+	                    	Description <input type="text" ng-model="createDescription" /><br/>
+	                    	Studio <input type="text" ng-model="createStudio" /><br/>
+	                    	Category <input type="text" ng-model="createCategory" /><br/>
+	
+	                    	<a class="btn btn-success" ng-click="create()"><i class="icon-plus-sign"></i> Create Movie</a>
+	                	</div>
+	            	</div>
+	            </div>
+	        </div>
+    	</div>
+	</body>
+</html>
